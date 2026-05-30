@@ -28,9 +28,9 @@ app.post("/analyze", async (req, res) => {
     let text = $("body").text().replace(/\s+/g, " ").trim();
     text = text.substring(0, 3000);
 
-    // 2️⃣ Gemini API call (FINAL CORRECT)
+    // 2️⃣ Gemini API (FINAL CORRECT)
     const geminiResponse = await axios.post(
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         contents: [
           {
@@ -44,7 +44,7 @@ app.post("/analyze", async (req, res) => {
       }
     );
 
-    // 3️⃣ Safe response
+    // 3️⃣ Extract answer safely
     const answer =
       geminiResponse.data?.candidates?.[0]?.content?.parts?.[0]?.text ||
       "This information is not available on this website.";
@@ -52,7 +52,7 @@ app.post("/analyze", async (req, res) => {
     res.json({ answer });
 
   } catch (error) {
-    console.error(error.response?.data || error.message);
+    console.error("ERROR:", error.response?.data || error.message);
     res.json({
       answer: "Error fetching website or processing request.",
     });
